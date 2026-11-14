@@ -32,4 +32,20 @@ export class FotosService {
 
     return nueva;
   }
+
+  update(id: number, datos: Partial<Omit<Foto, 'id'>>): Foto {
+    const foto = this.findOne(id);
+
+    Object.assign(foto, datos);
+
+    return foto;
+  }
+
+  remove(id: number): void {
+    this.findOne(id);
+
+    const indice = this.fotos.findIndex((f) => f.id === id);
+
+    this.fotos.splice(indice, 1);
+  }
 }
