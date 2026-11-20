@@ -33,7 +33,7 @@ export class FotosController {
 
   @Post()
   create(
-    @Body() datos: Omit<Foto, 'id'>,
+    @Body() datos: Partial<Foto>,
   ) {
     return this.fotosService.create(datos);
   }
