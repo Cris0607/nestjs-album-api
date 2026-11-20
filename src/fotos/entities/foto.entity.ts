@@ -21,7 +21,10 @@ export class Foto {
   calificacion: number;
 
   @Column()
-  ruta: string; // URL de la imagen
+  ruta: string;
+
+  @Column({ type: 'text', nullable: true })
+  fotografo: string | null;
 
   @CreateDateColumn()
   creadoEn: Date;
