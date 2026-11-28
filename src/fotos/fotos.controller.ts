@@ -1,12 +1,11 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
+  HttpStatus,
   Param,
-  ParseFloatPipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -14,7 +13,9 @@ import {
 } from '@nestjs/common';
 
 import { FotosService } from './fotos.service.js';
-import type { Foto } from './entities/foto.entity.js';
+import { CreateFotoDto } from './dto/create-foto.dto.js';
+import { UpdateFotoDto } from './dto/update-foto.dto.js';
+import { QueryFotosDto } from './dto/query-fotos.dto.js';
 
 @Controller('fotos')
 export class FotosController {
@@ -24,23 +25,9 @@ export class FotosController {
 
   @Get()
   findAll(
-    @Query('min', new DefaultValuePipe(0), ParseFloatPipe) min: number,
-    @Query('max', new DefaultValuePipe(5), ParseFloatPipe) max: number,
-    @Query('q') q: string | undefined,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('etiqueta') etiqueta: string | undefined,
-    @Query('orden') orden: 'asc' | 'desc' | undefined,
+    @Query() filtro: QueryFotosDto,
   ) {
-    return this.fotosService.findAll({
-      min,
-      max,
-      q,
-      page,
-      limit,
-      etiqueta,
-      orden,
-    });
+    return this.fotosService.findAll(filtro);
   }
 
   @Get(':id')
@@ -52,21 +39,21 @@ export class FotosController {
 
   @Post()
   create(
-    @Body() datos: Partial<Foto>,
+    @Body() dto: CreateFotoDto,
   ) {
-    return this.fotosService.create(datos);
+    return this.fotosService.create(dto);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() datos: Partial<Omit<Foto, 'id'>>,
+    @Body() dto: UpdateFotoDto,
   ) {
-    return this.fotosService.update(id, datos);
+    return this.fotosService.update(id, dto);
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(
     @Param('id', ParseIntPipe) id: number,
   ) {
