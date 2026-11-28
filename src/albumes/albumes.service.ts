@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { Album } from './entities/album.entity.js';
+import { CreateAlbumDto } from './dto/create-album.dto.js';
+import { UpdateAlbumDto } from './dto/update-album.dto.js';
 
 @Injectable()
 export class AlbumesService {
@@ -12,11 +15,13 @@ export class AlbumesService {
 
   findAll() {
     return this.albumesRepo.find({
-      order: { id: 'ASC' },
+      order: {
+        id: 'ASC',
+      },
     });
   }
 
-  async findFotos(id: number) {
+  async findOne(id: number): Promise<Album> {
     const album = await this.albumesRepo.findOne({
       where: { id },
       relations: {
@@ -25,9 +30,42 @@ export class AlbumesService {
     });
 
     if (!album) {
-      throw new NotFoundException(`Álbum ${id} no encontrado`);
+      throw new NotFoundException(
+        `Álbum ${id} no encontrado`,
+      );
     }
 
     return album;
+  }
+
+  async findFotos(id: number): Promise<Album> {
+    return this.findOne(id);
+  }
+
+  async create(
+    dto: CreateAlbumDto,
+  ): Promise<Album> {
+    const album = this.albumesRepo.create(dto);
+
+    return this.albumesRepo.save(album);
+  }
+
+  async update(
+    id: number,
+    dto: UpdateAlbumDto,
+  ): Promise<Album> {
+    const album = await this.findOne(id);
+
+    Object.assign(album, dto);
+
+    await this.albumesRepo.save(album);
+
+    return this.findOne(id);
+  }
+
+  async remove(id: number): Promise<void> {
+    const album = await this.findOne(id);
+
+    await this.albumesRepo.remove(album);
   }
 }

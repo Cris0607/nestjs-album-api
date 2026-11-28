@@ -11,10 +11,16 @@ export class Album {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 80 })
+  @Column({
+    length: 80,
+    unique: true,
+  })
   nombre: string;
 
   // 1:N Un álbum tiene muchas fotos
-  @OneToMany(() => Foto, (foto) => foto.album)
+  @OneToMany(
+    () => Foto,
+    (foto) => foto.album,
+  )
   fotos: Foto[];
 }
