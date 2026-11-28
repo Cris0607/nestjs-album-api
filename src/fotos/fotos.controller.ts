@@ -22,7 +22,6 @@ export class FotosController {
     private readonly fotosService: FotosService,
   ) {}
 
-  // /api/fotos?min=3&max=5&q=foto&page=1&limit=5
   @Get()
   findAll(
     @Query('min', new DefaultValuePipe(0), ParseFloatPipe) min: number,
@@ -30,6 +29,8 @@ export class FotosController {
     @Query('q') q: string | undefined,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('etiqueta') etiqueta: string | undefined,
+    @Query('orden') orden: 'asc' | 'desc' | undefined,
   ) {
     return this.fotosService.findAll({
       min,
@@ -37,6 +38,8 @@ export class FotosController {
       q,
       page,
       limit,
+      etiqueta,
+      orden,
     });
   }
 
